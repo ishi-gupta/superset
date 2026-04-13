@@ -1,0 +1,28 @@
+name: Trigger Vulnerability Scan
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-scan:
+    name: Trigger Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch scan request
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          repository: ishi-gupta/vuln-remediation-system
+          event-type: trigger-vuln-scan
+          client-payload: >-
+            {
+              "target_repo": "${{ github.repository }}",
+              "trigger_ref": "${{ github.ref }}",
+              "trigger_sha": "${{ github.sha }}",
+              "trigger_event": "${{ github.event_name }}"
+            }
