@@ -39,7 +39,7 @@ CACHE_IMPORT_PATH = "superset.extensions.metastore_cache.SupersetMetastoreCache"
 # Hash function lookup table matching superset.utils.hashing
 _HASH_METHODS: dict[str, Callable[..., Any]] = {
     "sha256": hashlib.sha256,
-    "md5": hashlib.md5,
+    "md5": lambda data=b"": hashlib.md5(data, usedforsecurity=False),
 }
 
 
