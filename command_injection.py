@@ -52,6 +52,6 @@ def _validate_hostname(hostname: str) -> None:
         pass
 
     # Validate as a hostname: only alphanumeric, hyphens, and dots allowed
-    hostname_pattern = re.compile(r"^[a-zA-Z0-9]([a-zA-Z0-9\-\.]*[a-zA-Z0-9])?$")
+    hostname_pattern = re.compile(r"^[a-zA-Z0-9]([a-zA-Z0-9\-\.]*[a-zA-Z0-9])?\Z")
     if not hostname_pattern.match(hostname) or len(hostname) > 253:
         raise ValueError(f"Invalid hostname: {hostname}")
