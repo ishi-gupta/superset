@@ -45,7 +45,10 @@ def test_configurable_hash_method_uses_md5():
     with patch("superset.utils.cache_manager.current_app", mock_app):
         hash_obj = configurable_hash_method(b"test")
         # Verify it returns a md5 hash object
-        assert hash_obj.hexdigest() == hashlib.md5(b"test").hexdigest()  # noqa: S324
+        assert (
+            hash_obj.hexdigest()
+            == hashlib.md5(b"test", usedforsecurity=False).hexdigest()
+        )  # noqa: S324
 
 
 def test_configurable_hash_method_empty_data():
@@ -158,7 +161,7 @@ def test_superset_cache_memoize_make_cache_key_allows_explicit_hash():
     "algorithm,expected_digest",
     [
         ("sha256", hashlib.sha256(b"test_data").hexdigest()),
-        ("md5", hashlib.md5(b"test_data").hexdigest()),  # noqa: S324
+        ("md5", hashlib.md5(b"test_data", usedforsecurity=False).hexdigest()),  # noqa: S324
     ],
 )
 def test_configurable_hash_method_parametrized(algorithm, expected_digest):
