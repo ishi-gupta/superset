@@ -66,6 +66,8 @@ jobs:
         id: get-sha
         if: steps.eval-label.outputs.result == 'up'
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          INPUT_ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -73,7 +75,7 @@ jobs:
 
             // If event is workflow_dispatch, use the issue_number from inputs
             if (context.eventName === "workflow_dispatch") {
-              const prNumber = "${{ github.event.inputs.issue_number }}";
+              const prNumber = process.env.INPUT_ISSUE_NUMBER;
               if (!prNumber) {
                 console.log("No PR number found.");
                 return;
@@ -251,12 +253,18 @@ jobs:
       - name: Fail on missing container image
         if: steps.check-image.outcome == 'failure'
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          COMMENT_USER_LOGIN: ${{ github.event.comment.user.login }}
+          INPUT_ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         with:
           github-token: ${{ github.token }}
           script: |
-            const errMsg = '@${{ github.event.comment.user.login }} Container image not yet published for this PR. Please try again when build is complete.';
+            const userLogin = process.env.COMMENT_USER_LOGIN || '';
+            const issueNumber = Number(process.env.INPUT_ISSUE_NUMBER || process.env.PR_NUMBER);
+            const errMsg = `@${userLogin} Container image not yet published for this PR. Please try again when build is complete.`;
             github.rest.issues.createComment({
-              issue_number: ${{ github.event.inputs.issue_number || github.event.pull_request.number }},
+              issue_number: issueNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: errMsg
@@ -325,6 +333,9 @@ jobs:
       - name: Comment (success)
         if: ${{ success() }}
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          GITHUB_ACTOR_LOGIN: ${{ github.actor }}
+          PUBLIC_IP: ${{ steps.get-ip.outputs.ip }}
         with:
           github-token: ${{github.token}}
           script: |
@@ -333,11 +344,13 @@ jobs:
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `@${{ github.actor }} Ephemeral environment spinning up at http://${{ steps.get-ip.outputs.ip }}:8080. Credentials are 'admin'/'admin'. Please allow several minutes for bootstrapping and startup.`
+              body: `@${process.env.GITHUB_ACTOR_LOGIN} Ephemeral environment spinning up at http://${process.env.PUBLIC_IP}:8080. Credentials are 'admin'/'admin'. Please allow several minutes for bootstrapping and startup.`
             });
       - name: Comment (failure)
         if: ${{ failure() }}
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          USER_LOGIN: ${{ github.event.inputs.user_login || github.event.comment.user.login }}
         with:
           github-token: ${{github.token}}
           script: |
@@ -346,5 +359,5 @@ jobs:
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '@${{ github.event.inputs.user_login || github.event.comment.user.login }} Ephemeral environment creation failed. Please check the Actions logs for details.'
+              body: `@${process.env.USER_LOGIN} Ephemeral environment creation failed. Please check the Actions logs for details.`
             })
