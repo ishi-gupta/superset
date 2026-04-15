@@ -21,7 +21,7 @@ import json
 from pathlib import Path
 
 import pytest
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 @pytest.fixture
@@ -35,7 +35,10 @@ def templates_dir():
 @pytest.fixture
 def jinja_env(templates_dir):
     """Create a Jinja2 environment for testing templates."""
-    return Environment(loader=FileSystemLoader(templates_dir))
+    return Environment(
+        loader=FileSystemLoader(templates_dir),
+        autoescape=select_autoescape(),
+    )
 
 
 @pytest.fixture
