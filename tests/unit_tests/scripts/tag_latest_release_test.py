@@ -53,9 +53,8 @@ def test_tag_latest_release(tag, expected_output):
     ) as subprocess_mock:
         result = BashMock.tag_latest_release(tag)
 
-        subprocess_mock.assert_called_once_with(  # noqa: S604
-            f"./scripts/tag_latest_release.sh {tag} --dry-run",
-            shell=True,
+        subprocess_mock.assert_called_once_with(
+            ["./scripts/tag_latest_release.sh", tag, "--dry-run"],
             capture_output=True,
             text=True,
             env={"TEST_ENV": "true"},
