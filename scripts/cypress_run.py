@@ -17,6 +17,7 @@
 
 import argparse
 import os
+import shlex
 import subprocess
 from datetime import datetime
 
@@ -78,9 +79,8 @@ def run_cypress_for_test_file(
             print(f"DRY RUN: {cmd}")
             return 0
 
-        process = subprocess.Popen(  # noqa: S602
-            cmd,
-            shell=True,
+        process = subprocess.Popen(  # noqa: S603
+            shlex.split(cmd),
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             universal_newlines=True,

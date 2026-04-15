@@ -16,6 +16,7 @@
 import csv as lib_csv
 import os
 import re
+import subprocess
 import sys
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -271,14 +272,25 @@ class GitLogs:
 
     @staticmethod
     def _git_get_current_head() -> str:
-        output = os.popen("git status | head -1").read()  # noqa: S605, S607
-        match = re.match("(?:HEAD detached at|On branch) (.*)", output)
+        result = subprocess.run(  # noqa: S603, S607
+            ["git", "status"],  # noqa: S607
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        first_line = result.stdout.split("\n")[0] if result.stdout else ""
+        match = re.match("(?:HEAD detached at|On branch) (.*)", first_line)
         if not match:
             return ""
         return match.group(1)
 
     def _git_checkout(self, git_ref: str) -> None:
-        os.popen(f"git checkout {git_ref}").read()  # noqa: S605
+        subprocess.run(  # noqa: S603, S607
+            ["git", "checkout", git_ref],  # noqa: S607
+            capture_output=True,
+            text=True,
+            check=False,
+        )
         current_head = self._git_get_current_head()
         if current_head != git_ref:
             print(f"Could not checkout {git_ref}")
@@ -288,11 +300,18 @@ class GitLogs:
         # let's get current git ref so we can revert it back
         current_git_ref = self._git_get_current_head()
         self._git_checkout(self._git_ref)
-        output = (
-            os.popen('git --no-pager log --pretty=format:"%h|%an|%ae|%ad|%s|"')  # noqa: S605, S607
-            .read()
-            .split("\n")
+        result = subprocess.run(  # noqa: S603, S607
+            [  # noqa: S607
+                "git",
+                "--no-pager",
+                "log",
+                '--pretty=format:"%h|%an|%ae|%ad|%s|"',
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
         )
+        output = result.stdout.split("\n") if result.stdout else []
         # revert to git ref, let's be nice
         self._git_checkout(current_git_ref)
         return output
