@@ -45,9 +45,11 @@ jobs:
     steps:
       - name: Comment access denied
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          COMMENT_USER_LOGIN: ${{ github.event.comment.user.login || github.event.review.user.login || github.event.issue.user.login }}
         with:
           script: |
-            const message = `👋 Hi @${{ github.event.comment.user.login || github.event.review.user.login || github.event.issue.user.login }}!
+            const message = `👋 Hi @${process.env.COMMENT_USER_LOGIN}!
 
             Thanks for trying to use Claude Code, but currently only certain team members have access to this feature.
 
