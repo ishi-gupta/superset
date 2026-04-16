@@ -105,6 +105,14 @@ def check_pypi_package(package_name: str, timeout: float = 5.0) -> bool:
 
     url = f"https://pypi.org/pypi/{base_name}/json"
     try:
+        from urllib.parse import urlparse
+
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            raise ValueError(
+                f"URL scheme '{parsed.scheme}' is not allowed. "
+                "Only 'http' and 'https' are permitted."
+            )
         req = urllib.request.Request(  # noqa: S310
             url, headers={"User-Agent": "superset-lint/1.0"}
         )
@@ -454,7 +462,7 @@ def print_report(reports: list[MetadataReport], verbose: bool = False) -> None: 
     print("=" * 60)
 
     all_fields = {**REQUIRED_FIELDS, **RECOMMENDED_FIELDS, **OPTIONAL_FIELDS}
-    field_counts: dict[str, int] = {f: 0 for f in all_fields}
+    field_counts: dict[str, int] = dict.fromkeys(all_fields, 0)
 
     for r in reports:
         for field in r.present_fields:

@@ -37,7 +37,7 @@ from superset.tasks.types import (
 )
 from superset.utils import json
 from superset.utils.hashing import hash_from_str
-from superset.utils.urls import get_url_path
+from superset.utils.urls import get_url_path, validate_urlopen_scheme
 
 if TYPE_CHECKING:
     from superset.models.dashboard import Dashboard
@@ -127,6 +127,7 @@ def fetch_csrf_token(
     :returns: A map of headers, including the session cookie and csrf token
     """
     url = get_url_path("SecurityRestApi.csrf_token")
+    validate_urlopen_scheme(url)
     logger.info("Fetching %s", url)
     req = request.Request(url, headers=headers, method="GET")  # noqa: S310
     response: HTTPResponse

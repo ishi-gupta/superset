@@ -21,6 +21,7 @@ import os
 import re
 import subprocess
 from typing import List
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 # Define patterns for each group of files you're interested in
@@ -54,8 +55,19 @@ PATTERNS = {
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 
 
+def _validate_url_scheme(url: str) -> None:
+    """Reject non-HTTP(S) schemes to prevent local file access (B310 / CWE-22)."""
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError(
+            f"URL scheme '{parsed.scheme}' is not allowed. "
+            "Only 'http' and 'https' are permitted."
+        )
+
+
 def fetch_files_github_api(url: str):  # type: ignore
     """Fetches data using GitHub API."""
+    _validate_url_scheme(url)
     req = Request(url)  # noqa: S310
     req.add_header("Authorization", f"Bearer {GITHUB_TOKEN}")
     req.add_header("Accept", "application/vnd.github.v3+json")
