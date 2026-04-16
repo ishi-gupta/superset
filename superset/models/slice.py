@@ -23,7 +23,7 @@ from urllib import parse
 import sqlalchemy as sqla
 from flask_appbuilder import Model
 from flask_appbuilder.models.decorators import renders
-from markupsafe import escape, Markup
+from markupsafe import Markup
 from sqlalchemy import (
     Boolean,
     Column,
@@ -321,8 +321,7 @@ class Slice(  # pylint: disable=too-many-public-methods
 
     @property
     def slice_link(self) -> Markup:
-        name = escape(self.chart)
-        return Markup(f'<a href="{self.url}">{name}</a>')
+        return Markup('<a href="%s">%s</a>') % (self.url, self.chart)
 
     @property
     def icons(self) -> str:

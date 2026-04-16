@@ -480,12 +480,8 @@ class SavedQuery(
     @property
     def pop_tab_link(self) -> Markup:
         return Markup(
-            f"""
-            <a href="/sqllab?savedQueryId={self.id}">
-                <i class="fa fa-link"></i>
-            </a>
-        """
-        )
+            '<a href="/sqllab?savedQueryId=%s"><i class="fa fa-link"></i></a>'
+        ) % (self.id,)
 
     @property
     def user_email(self) -> str:

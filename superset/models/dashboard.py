@@ -26,7 +26,7 @@ from flask import current_app as app
 from flask_appbuilder import Model
 from flask_appbuilder.models.decorators import renders
 from flask_appbuilder.security.sqla.models import User
-from markupsafe import escape, Markup
+from markupsafe import Markup
 from sqlalchemy import (
     Boolean,
     Column,
@@ -220,8 +220,10 @@ class Dashboard(CoreDashboard, AuditMixinNullable, ImportExportMixin):
 
     @renders("dashboard_title")
     def dashboard_link(self) -> Markup:
-        title = escape(self.dashboard_title or "<empty>")
-        return Markup(f'<a href="{self.url}">{title}</a>')
+        return Markup('<a href="%s">%s</a>') % (
+            self.url,
+            self.dashboard_title or "<empty>",
+        )
 
     @property
     def digest(self) -> str | None:
