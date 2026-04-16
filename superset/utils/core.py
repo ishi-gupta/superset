@@ -358,6 +358,8 @@ class ReservedUrlParameters(StrEnum):
     @staticmethod
     def is_standalone_mode() -> bool | None:
         standalone_param = request.args.get(ReservedUrlParameters.STANDALONE.value)
+        if standalone_param is not None and standalone_param.strip().lower() == "nan":
+            return None
         standalone: bool | None = bool(
             standalone_param and standalone_param != "false" and standalone_param != "0"
         )
@@ -426,6 +428,8 @@ def cast_to_num(value: float | int | str | None) -> float | int | None:
         return value
     if value.isdigit():
         return int(value)
+    if value.strip().lower() == "nan":
+        return None
     try:
         return float(value)
     except ValueError:
