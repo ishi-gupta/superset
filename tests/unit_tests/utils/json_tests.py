@@ -293,12 +293,12 @@ def test_json_int_dttm_ser():
                 "other": "value",
             },
             {
-                "$.auth_params.privatekey_body": "-----BEGIN PRIVATE KEY-----",
+                "$.auth_params.privatekey_body": "-----BEGIN PRIVATE KEY-----",  # noqa: E501  # gitleaks:allow
                 "$.auth_params.privatekey_pass": "passphrase",
             },
             {
                 "auth_params": {
-                    "privatekey_body": "-----BEGIN PRIVATE KEY-----",
+                    "privatekey_body": "-----BEGIN PRIVATE KEY-----",  # gitleaks:allow
                     "privatekey_pass": "passphrase",
                 },
                 "other": "value",

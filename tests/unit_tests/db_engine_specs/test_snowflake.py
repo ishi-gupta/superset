@@ -306,7 +306,7 @@ def test_mask_encrypted_extra() -> None:
             "auth_method": "keypair",
             "auth_params": {
                 "privatekey_body": (
-                    "-----BEGIN ENCRYPTED PRIVATE KEY-----"
+                    "-----BEGIN ENCRYPTED PRIVATE KEY-----"  # gitleaks:allow
                     "..."
                     "-----END ENCRYPTED PRIVATE KEY-----"
                 ),
@@ -405,7 +405,7 @@ def test_unmask_encrypted_extra() -> None:
             "auth_method": "keypair",
             "auth_params": {
                 "privatekey_body": (
-                    "-----BEGIN ENCRYPTED PRIVATE KEY-----"
+                    "-----BEGIN ENCRYPTED PRIVATE KEY-----"  # gitleaks:allow
                     "..."
                     "-----END ENCRYPTED PRIVATE KEY-----"
                 ),
@@ -430,7 +430,7 @@ def test_unmask_encrypted_extra() -> None:
             "auth_method": "keypair",
             "auth_params": {
                 "privatekey_body": (
-                    "-----BEGIN ENCRYPTED PRIVATE KEY-----"
+                    "-----BEGIN ENCRYPTED PRIVATE KEY-----"  # gitleaks:allow
                     "..."
                     "-----END ENCRYPTED PRIVATE KEY-----"
                 ),

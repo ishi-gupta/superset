@@ -500,7 +500,7 @@ def test_import_with_encrypted_extra_secrets(
 
     secrets = {
         "databases/test.yaml": {
-            "$.credentials_info.private_key": "-----BEGIN PRIVATE KEY-----"
+            "$.credentials_info.private_key": "-----BEGIN PRIVATE KEY-----"  # noqa: E501  # gitleaks:allow
         }
     }
     form_data = {
