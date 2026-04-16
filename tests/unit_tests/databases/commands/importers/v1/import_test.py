@@ -285,7 +285,7 @@ def test_import_database_with_masked_encrypted_extra_new_db(
     assert encrypted["credentials_info"]["type"] == "service_account"
     assert encrypted["credentials_info"]["project_id"] == "test-project"
     assert encrypted["credentials_info"]["private_key"] == (
-        "-----BEGIN PRIVATE KEY-----\nMyPriVaTeKeY\n-----END PRIVATE KEY-----\n"
+        "-----BEGIN PRIVATE KEY-----\nMyPriVaTeKeY\n-----END PRIVATE KEY-----\n"  # noqa: E501  # gitleaks:allow
     )
 
 
@@ -336,7 +336,7 @@ def test_import_database_with_masked_encrypted_extra_existing_db(
     encrypted = json.loads(database2.encrypted_extra)
     assert encrypted["credentials_info"]["project_id"] == "updated-project"
     assert encrypted["credentials_info"]["private_key"] == (
-        "-----BEGIN PRIVATE KEY-----\nMyPriVaTeKeY\n-----END PRIVATE KEY-----\n"
+        "-----BEGIN PRIVATE KEY-----\nMyPriVaTeKeY\n-----END PRIVATE KEY-----\n"  # noqa: E501  # gitleaks:allow
     )
     assert encrypted["credentials_info"]["private_key"] != PASSWORD_MASK
 

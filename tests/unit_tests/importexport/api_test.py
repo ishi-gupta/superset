@@ -48,7 +48,9 @@ def test_export_assets(
     mocked_export_result = [
         (
             "metadata.yaml",
-            lambda: "version: 1.0.0\ntype: assets\ntimestamp: '2022-01-01T00:00:00+00:00'\n",  # noqa: E501
+            lambda: (
+                "version: 1.0.0\ntype: assets\ntimestamp: '2022-01-01T00:00:00+00:00'\n"
+            ),  # noqa: E501
         ),
         ("databases/example.yaml", lambda: "<DATABASE CONTENTS>"),
     ]
@@ -144,7 +146,7 @@ def test_import_assets_with_encrypted_extra_secrets(
 
     secrets = {
         "assets_export/databases/example.yaml": {
-            "$.credentials_info.private_key": "-----BEGIN PRIVATE KEY-----\nKEY\n-----END PRIVATE KEY-----\n",  # noqa: E501
+            "$.credentials_info.private_key": "-----BEGIN PRIVATE KEY-----\nKEY\n-----END PRIVATE KEY-----\n",  # noqa: E501  # gitleaks:allow
         }
     }
     form_data = {

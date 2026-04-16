@@ -3180,7 +3180,7 @@ class TestDatabaseApi(SupersetTestCase):
             "encrypted_extra_secrets": json.dumps(
                 {
                     "databases/database_1.yaml": {
-                        "$.credentials_info.private_key": "-----BEGIN PRIVATE KEY-----\\nREAL_KEY\\n-----END PRIVATE KEY-----\\n",  # noqa: E501
+                        "$.credentials_info.private_key": "-----BEGIN PRIVATE KEY-----\\nREAL_KEY\\n-----END PRIVATE KEY-----\\n",  # noqa: E501  # gitleaks:allow
                     }
                 }
             ),
@@ -3197,7 +3197,7 @@ class TestDatabaseApi(SupersetTestCase):
         assert database.encrypted_extra is not None
         encrypted = json.loads(database.encrypted_extra)
         assert encrypted["credentials_info"]["private_key"] == (
-            "-----BEGIN PRIVATE KEY-----\nREAL_KEY\n-----END PRIVATE KEY-----\n"
+            "-----BEGIN PRIVATE KEY-----\nREAL_KEY\n-----END PRIVATE KEY-----\n"  # noqa: E501  # gitleaks:allow
         )
 
         db.session.delete(database)

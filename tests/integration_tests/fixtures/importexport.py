@@ -418,7 +418,7 @@ database_config_with_masked_encrypted_extra: dict[str, Any] = {
             "credentials_info": {
                 "type": "service_account",
                 "project_id": "test-project",
-                "private_key": "-----BEGIN PRIVATE KEY-----\nMyPriVaTeKeY\n-----END PRIVATE KEY-----\n",  # noqa: E501
+                "private_key": "-----BEGIN PRIVATE KEY-----\nMyPriVaTeKeY\n-----END PRIVATE KEY-----\n",  # noqa: E501  # gitleaks:allow
             }
         }
     ),
