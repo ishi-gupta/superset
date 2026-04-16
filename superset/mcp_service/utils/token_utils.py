@@ -96,7 +96,7 @@ def estimate_response_tokens(response: ToolResponse) -> int:
 
         return estimate_token_count(response_str)
     except Exception as e:  # noqa: BLE001
-        logger.warning("Failed to estimate response tokens: %s", e)
+        logger.warning("Failed to estimate response output size: %s", e)
         # Return a high estimate to be safe (conservative fallback)
         return 100000
 

@@ -972,7 +972,7 @@ class ResponseSizeGuardMiddleware(Middleware):
             return None
 
         logger.warning(
-            "Response for %s truncated from ~%d to ~%d tokens (limit: %d). Fields: %s",
+            "Response for %s truncated from ~%d to ~%d output units (limit: %d). Fields: %s",
             tool_name,
             estimated_tokens,
             truncated_tokens,
@@ -1027,13 +1027,13 @@ class ResponseSizeGuardMiddleware(Middleware):
             estimated_tokens = estimate_response_tokens(response)
         except MemoryError as me:
             logger.warning(
-                "MemoryError while estimating tokens for %s: %s", tool_name, me
+                "MemoryError while estimating output size for %s: %s", tool_name, me
             )
             # Treat as over limit to avoid further serialization
             estimated_tokens = self.token_limit + 1
         except Exception as e:  # noqa: BLE001
             logger.warning(
-                "Failed to estimate response tokens for %s: %s", tool_name, e
+                "Failed to estimate response output size for %s: %s", tool_name, e
             )
             # Conservative fallback: block rather than risk OOM
             estimated_tokens = self.token_limit + 1

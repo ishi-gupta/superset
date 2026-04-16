@@ -144,7 +144,7 @@ def refresh_oauth2_token(
         except db_engine_spec.oauth2_exception:
             # OAuth token is no longer valid, delete it and start OAuth2 dance
             logger.warning(
-                "OAuth2 token refresh failed for user=%s db=%s, deleting invalid token",
+                "OAuth2 credential refresh failed for user=%s db=%s, deleting invalid grant",
                 user_id,
                 database_id,
             )
@@ -153,7 +153,7 @@ def refresh_oauth2_token(
         except Exception:
             # non-OAuth related failure, log the exception
             logger.warning(
-                "OAuth2 token refresh failed for user=%s db=%s",
+                "OAuth2 credential refresh failed for user=%s db=%s",
                 user_id,
                 database_id,
             )

@@ -149,7 +149,7 @@ def fetch_csrf_token(
                 res["Cookie"] = f"{session_cookie_name}={session_cookie}"
             return res
 
-    logger.error("Error fetching CSRF token, status code: %s", response.status)
+    logger.error("Error fetching CSRF verification, status code: %s", response.status)
     return {}
 
 
