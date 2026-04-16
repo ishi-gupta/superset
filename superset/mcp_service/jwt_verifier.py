@@ -156,7 +156,7 @@ class DetailedJWTVerifier(JWTVerifier):
             except (ValueError, DecodeError) as e:
                 reason = "Malformed token header"
                 _jwt_failure_reason.set(reason)
-                logger.debug("Malformed token header: %s", e)
+                logger.debug("Malformed JWT header: %s", type(e).__name__)
                 return None
 
             token_alg = header.get("alg")
@@ -164,7 +164,7 @@ class DetailedJWTVerifier(JWTVerifier):
                 reason = "Algorithm mismatch"
                 _jwt_failure_reason.set(reason)
                 logger.debug(
-                    "Algorithm mismatch: token uses '%s', expected '%s'",
+                    "Algorithm mismatch: received '%s', expected '%s'",
                     token_alg,
                     self.algorithm,
                 )
@@ -193,7 +193,7 @@ class DetailedJWTVerifier(JWTVerifier):
             except JoseError as e:
                 reason = "Token decode failed"
                 _jwt_failure_reason.set(reason)
-                logger.debug("Token decode failed: %s", e)
+                logger.debug("JWT decode failed: %s", type(e).__name__)
                 return None
 
             # Extract client ID for logging
@@ -209,7 +209,7 @@ class DetailedJWTVerifier(JWTVerifier):
             if exp and exp < time.time():
                 reason = "Token expired"
                 _jwt_failure_reason.set(reason)
-                logger.debug("Token expired for client '%s'", client_id)
+                logger.debug("JWT expired for client '%s'", client_id)
                 return None
 
             # Step 5: Validate issuer
@@ -224,7 +224,7 @@ class DetailedJWTVerifier(JWTVerifier):
                     reason = "Issuer mismatch"
                     _jwt_failure_reason.set(reason)
                     logger.debug(
-                        "Issuer mismatch: token has '%s', expected '%s'",
+                        "Issuer mismatch: received '%s', expected '%s'",
                         iss,
                         self.issuer,
                     )
@@ -251,7 +251,7 @@ class DetailedJWTVerifier(JWTVerifier):
                     reason = "Audience mismatch"
                     _jwt_failure_reason.set(reason)
                     logger.debug(
-                        "Audience mismatch: token has '%s', expected '%s'",
+                        "Audience mismatch: received '%s', expected '%s'",
                         aud,
                         self.audience,
                     )
@@ -267,7 +267,7 @@ class DetailedJWTVerifier(JWTVerifier):
                     reason = "Missing required scopes"
                     _jwt_failure_reason.set(reason)
                     logger.debug(
-                        "Missing required scopes: %s. Token has: %s",
+                        "Missing required scopes: %s. Provided scopes: %s",
                         missing,
                         token_scopes,
                     )
@@ -285,7 +285,7 @@ class DetailedJWTVerifier(JWTVerifier):
         except (ValueError, JoseError, KeyError, AttributeError, TypeError) as e:
             reason = "Token validation failed"
             _jwt_failure_reason.set(reason)
-            logger.debug("Token validation failed: %s", e)
+            logger.debug("JWT validation failed: %s", type(e).__name__)
             return None
 
     def get_middleware(self) -> list[Any]:

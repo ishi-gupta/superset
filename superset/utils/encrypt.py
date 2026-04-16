@@ -169,8 +169,8 @@ class SecretsMigrator:
                         self._read_bytes(column_name, row[column_name]), self._dialect
                     )
                     logger.info(
-                        "Current secret is able to decrypt value on column [%s.%s],"
-                        " nothing to do",
+                        "Column [%s.%s] is already encrypted with the active"
+                        " configuration, nothing to do",
                         table_name,
                         column_name,
                     )
