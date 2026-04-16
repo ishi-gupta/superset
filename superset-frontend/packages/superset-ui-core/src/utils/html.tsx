@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import DOMPurify from 'dompurify';
 import { FilterXSS, getDefaultWhiteList } from 'xss';
 import { DataRecordValue } from '../types';
 
@@ -49,7 +50,7 @@ const xssFilter = new FilterXSS({
 });
 
 export function sanitizeHtml(htmlString: string) {
-  return xssFilter.process(htmlString);
+  return DOMPurify.sanitize(xssFilter.process(htmlString));
 }
 
 const KNOWN_HTML_TAGS = new Set([
