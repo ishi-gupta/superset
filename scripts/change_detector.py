@@ -20,6 +20,7 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 from typing import List
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
@@ -150,7 +151,10 @@ def main(event_type: str, sha: str, repo: str) -> None:
         )
 
     # Output results
-    output_path = os.getenv("GITHUB_OUTPUT") or "/tmp/GITHUB_OUTPUT.txt"  # noqa: S108
+    output_path = os.getenv("GITHUB_OUTPUT")
+    if not output_path:
+        fd, output_path = tempfile.mkstemp(suffix=".txt", prefix="GITHUB_OUTPUT_")
+        os.close(fd)
     with open(output_path, "a") as f:
         for check, changed in changes_detected.items():
             # NOTE: as noted above, we assume that if 100 files are touched, we should
