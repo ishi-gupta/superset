@@ -24,6 +24,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 from parameterized import parameterized
 from unittest import mock
 import prison
+from sqlalchemy import text
 
 from superset import db, security_manager
 from superset.connectors.sqla.models import SqlaTable  # noqa: F401
@@ -184,10 +185,10 @@ class TestSqlLab(SupersetTestCase):
             examples_db = get_example_database()
             with examples_db.get_sqla_engine() as engine:
                 data = engine.execute(
-                    f"SELECT * FROM admin_database.{tmp_table_name}"  # noqa: S608
+                    text(f"SELECT * FROM admin_database.{tmp_table_name}")  # noqa: S608
                 ).fetchall()
                 names_count = engine.execute(
-                    f"SELECT COUNT(*) FROM birth_names"  # noqa: F541, S608
+                    text("SELECT COUNT(*) FROM birth_names")
                 ).first()
                 assert names_count[0] == len(
                     data
@@ -195,7 +196,7 @@ class TestSqlLab(SupersetTestCase):
 
                 # cleanup
                 engine.execute(
-                    f"DROP {ctas_method.name} admin_database.{tmp_table_name}"
+                    text(f"DROP {ctas_method.name} admin_database.{tmp_table_name}")  # noqa: S608
                 )
                 examples_db.allow_ctas = old_allow_ctas
                 db.session.commit()

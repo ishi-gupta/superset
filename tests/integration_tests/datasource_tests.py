@@ -23,6 +23,7 @@ from unittest import mock
 import prison
 import pytest
 from flask import current_app
+from sqlalchemy import text
 
 from superset import db, security_manager as sm
 from superset.commands.dataset.exceptions import DatasetNotFoundError
@@ -63,15 +64,21 @@ def create_test_table_context(database: Database):
 
     with database.get_sqla_engine() as engine:
         engine.execute(
-            f"CREATE TABLE IF NOT EXISTS {full_table_name} AS SELECT 1 as first, 2 as second"  # noqa: E501
+            text(
+                f"CREATE TABLE IF NOT EXISTS {full_table_name} AS SELECT 1 as first, 2 as second"  # noqa: S608, E501
+            )
         )
-        engine.execute(f"INSERT INTO {full_table_name} (first, second) VALUES (1, 2)")  # noqa: S608
-        engine.execute(f"INSERT INTO {full_table_name} (first, second) VALUES (3, 4)")  # noqa: S608
+        engine.execute(
+            text(f"INSERT INTO {full_table_name} (first, second) VALUES (1, 2)")  # noqa: S608
+        )
+        engine.execute(
+            text(f"INSERT INTO {full_table_name} (first, second) VALUES (3, 4)")  # noqa: S608
+        )
 
     yield db.session
 
     with database.get_sqla_engine() as engine:
-        engine.execute(f"DROP TABLE {full_table_name}")
+        engine.execute(text(f"DROP TABLE {full_table_name}"))  # noqa: S608
 
 
 @contextmanager
@@ -217,8 +224,8 @@ class TestDatasource(SupersetTestCase):
     def test_external_metadata_by_name_for_virtual_table_uses_mutator(self):
         self.login(ADMIN_USERNAME)
         with create_and_cleanup_table() as tbl:
-            current_app.config["SQL_QUERY_MUTATOR"] = (
-                lambda sql, **kwargs: "SELECT 456 as intcol, 'def' as mutated_strcol"
+            current_app.config["SQL_QUERY_MUTATOR"] = lambda sql, **kwargs: (
+                "SELECT 456 as intcol, 'def' as mutated_strcol"
             )
 
             params = prison.dumps(
@@ -353,10 +360,12 @@ class TestDatasource(SupersetTestCase):
 
         pytest.raises(
             SupersetGenericDBErrorException,
-            lambda: db.session.query(SqlaTable)
-            .filter_by(id=tbl.id)
-            .one_or_none()
-            .external_metadata(),
+            lambda: (
+                db.session.query(SqlaTable)
+                .filter_by(id=tbl.id)
+                .one_or_none()
+                .external_metadata()
+            ),
         )
 
         resp = self.client.get(url)
