@@ -75,3 +75,26 @@ def is_secure_url(url: str) -> bool:
     """
     parsed_url = urlparse(url)
     return parsed_url.scheme == "https"
+
+
+def validate_urlopen_scheme(
+    url: str,
+    allowed_schemes: frozenset[str] = frozenset({"http", "https"}),
+) -> None:
+    """
+    Validate that a URL uses only permitted schemes before passing it to urlopen.
+
+    By default only ``http`` and ``https`` are allowed.  Calling ``urlopen``
+    with ``file://`` or other custom schemes can expose local files (B310 /
+    CWE-22).
+
+    :param url: The URL (or stringified Request) to validate.
+    :param allowed_schemes: Set of permitted lower-case scheme strings.
+    :raises ValueError: If the scheme is not in *allowed_schemes*.
+    """
+    parsed = urlparse(url)
+    if parsed.scheme.lower() not in allowed_schemes:
+        raise ValueError(
+            f"URL scheme '{parsed.scheme}' is not allowed. "
+            f"Permitted schemes: {sorted(allowed_schemes)}"
+        )

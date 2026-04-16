@@ -34,6 +34,7 @@ from superset.models.core import Database
 from superset.sql.parse import Table
 from superset.utils import json
 from superset.utils.core import get_user
+from superset.utils.urls import validate_urlopen_scheme
 
 logger = logging.getLogger(__name__)
 
@@ -205,6 +206,7 @@ def load_data(data_uri: str, dataset: SqlaTable, database: Database) -> None:
     data_uri = normalize_example_data_url(data_uri)
 
     validate_data_uri(data_uri)
+    validate_urlopen_scheme(data_uri)
     logger.info("Downloading data from %s", data_uri)
     data = request.urlopen(data_uri)  # pylint: disable=consider-using-with  # noqa: S310
     if data_uri.endswith(".gz"):
